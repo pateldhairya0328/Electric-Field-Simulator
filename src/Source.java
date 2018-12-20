@@ -1,3 +1,6 @@
+import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelListener;
+
 import javax.swing.JFrame;
 
 public class Source{
@@ -11,5 +14,10 @@ public class Source{
         frame.setVisible(true);
         frame.setExtendedState (JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+        InputHandling inputHandling = new InputHandling();
+        MouseListener listener = inputHandling.new MouseInputHandler();
+        frame.addMouseListener(listener);
+        MouseWheelListener wheelListener = inputHandling.new MouseWheelHandler();
+        frame.addMouseWheelListener(wheelListener);
     }
 }
