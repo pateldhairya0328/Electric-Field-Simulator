@@ -70,12 +70,11 @@ public class Window extends JPanel{
      * @param g2 Needed to draw to JFrame
      */
     void drawGrid(Graphics2D g2){
-
         g2.setColor(Color.LIGHT_GRAY);
         double i;
         
         xStep = findStep(gridWidth/20);
-        intervalX = getWidth()/(gridWidth/xStep);
+        intervalX = frameWidth/(gridWidth/xStep);
         if (xStep >= 0.5){
             curunit = BASE;
         }
@@ -89,21 +88,21 @@ public class Window extends JPanel{
             curunit = NANO;
         }
         double k = 0;
-        for (i = getWidth()/2+(int)xOffset; i < getWidth(); i += intervalX){
-            g2.drawLine((int)i, 0, (int)i, getHeight());
-            g2.drawString(df.format(k*VAL[curunit]), (int)i, getHeight()/2+(int)yOffset);
+        for (i = frameWidth/2+(int)xOffset; i < frameWidth; i += intervalX){
+            g2.drawLine((int)i, 0, (int)i, frameHeight);
+            g2.drawString(df.format(k*VAL[curunit]), (int)i, frameHeight/2+(int)yOffset);
             k += xStep;
         }
         k = 0;
-        for (i = getWidth()/2+(int)xOffset; i > 0; i -= intervalX){
-            g2.drawLine((int)i, 0, (int)i, getHeight());
-            g2.drawString(df.format(k*VAL[curunit]), (int)i, getHeight()/2+(int)yOffset);
+        for (i = frameWidth/2+(int)xOffset; i > 0; i -= intervalX){
+            g2.drawLine((int)i, 0, (int)i, frameHeight);
+            g2.drawString(df.format(k*VAL[curunit]), (int)i, frameHeight/2+(int)yOffset);
             k -= xStep;
         }
 
         ratio = gridWidth/gridHeight;
         yStep = findStep(gridHeight/(20/ratio));
-        intervalY = getHeight()/(gridHeight/yStep);
+        intervalY = frameHeight/(gridHeight/yStep);
         if (yStep >= 0.5){
             curunit = BASE;
         }
@@ -117,21 +116,21 @@ public class Window extends JPanel{
             curunit = NANO;
         }
         k = 0;
-        for (i = getHeight()/2+(int)yOffset; i < getHeight(); i += intervalY){
-            g2.drawLine(0, (int)i, getWidth(), (int)i);
-            g2.drawString(df.format(k*VAL[curunit]), getWidth()/2+(int)xOffset, (int)i);
+        for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
+            g2.drawLine(0, (int)i, frameWidth, (int)i);
+            g2.drawString(df.format(k*VAL[curunit]), frameWidth/2+(int)xOffset, (int)i);
             k += yStep;
         }
         k = 0;
-        for (i = getHeight()/2+(int)yOffset; i > 0; i -= intervalY){
-            g2.drawLine(0, (int)i, getWidth(), (int)i);
-            g2.drawString(df.format(k*VAL[curunit]), getWidth()/2+(int)xOffset, (int)i);
+        for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
+            g2.drawLine(0, (int)i, frameWidth, (int)i);
+            g2.drawString(df.format(k*VAL[curunit]), frameWidth/2+(int)xOffset, (int)i);
             k -= yStep;
         }
         
         g2.setColor(Color.black);
-        g2.drawLine(0, getHeight()/2+(int)yOffset, getWidth(), getHeight()/2+(int)yOffset);
-        g2.drawLine(getWidth()/2+(int)xOffset, 0, getWidth()/2+(int)xOffset, getHeight());
+        g2.drawLine(0, frameHeight/2+(int)yOffset, frameWidth, frameHeight/2+(int)yOffset);
+        g2.drawLine(frameWidth/2+(int)xOffset, 0, frameWidth/2+(int)xOffset, frameHeight);
     }
 
     /**
