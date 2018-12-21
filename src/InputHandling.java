@@ -61,7 +61,7 @@ public class InputHandling{
             if ((Window.xStep >= 20 || Window.yStep >= 20) && amount < 0){
                 amount = 0;
             }
-            if ((Window.xStep <= 1e10 || Window.yStep <= 1e-10) && amount > 0){
+            if ((Window.xStep <= 1e-10 || Window.yStep <= 1e-10) && amount > 0){
                 amount = 0;
             }
 
