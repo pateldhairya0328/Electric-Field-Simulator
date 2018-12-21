@@ -1,5 +1,6 @@
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
 
@@ -19,5 +20,7 @@ public class Source{
         frame.addMouseListener(listener);
         MouseWheelListener wheelListener = inputHandling.new MouseWheelHandler();
         frame.addMouseWheelListener(wheelListener);
+        MouseMotionListener moveListener = inputHandling.new MouseMoveHandler();
+        frame.addMouseMotionListener(moveListener);
     }
 }
