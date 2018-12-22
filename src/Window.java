@@ -38,6 +38,7 @@ public class Window extends JPanel{
     static final int NANO = 3;
     static final int[] VAL = {1, 1000, 1000000, 1000000000};
     static final String[] UNIT = {"m", "mm", "um", "nm"};
+    static final String[] CUNIT = {"C", "mC", "uC", "nC"};
     static int curunit = BASE;
 
     static int cursor = Cursor.DEFAULT_CURSOR;
@@ -45,6 +46,8 @@ public class Window extends JPanel{
     static int mouseY = 0;
     static ArrayList<Charge> charges = new ArrayList<Charge>(0);
 
+    static Graphics2D g2;
+    static Window window;
     /**
      * Set look and feel of the Window to match platform
      */
@@ -53,7 +56,7 @@ public class Window extends JPanel{
             //Changes the look and feel from the default JAVA look and feel to the platform's look and feel
             UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName ());
         }catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e){}
-        
+        window = this;
         setFocusable(true);
     }
 
@@ -63,13 +66,17 @@ public class Window extends JPanel{
     @Override
     protected void paintComponent(Graphics g){   
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
+        g2 = (Graphics2D)g;
 
         this.setCursor(new Cursor(cursor));
         
         frameWidth = getWidth();
         frameHeight = getHeight();
-        drawGrid(g2);
+        drawGrid();
+
+        for (Charge c: charges){
+            c.drawCharge();
+        }
     }
 
     /**
@@ -77,7 +84,7 @@ public class Window extends JPanel{
      * 
      * @param g2 Needed to draw to JFrame
      */
-    void drawGrid(Graphics2D g2){
+    void drawGrid(){
         double i;
 
         //Find Step size and Unit

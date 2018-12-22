@@ -8,7 +8,6 @@ public class Charge{
     private double x = 0;
     private double y = 0;
     private Rectangle rect;
-    private JPanel panel;
     private Graphics2D g2;
 
     /**
@@ -22,7 +21,6 @@ public class Charge{
         this.x = x;
         this.y = y;
         this.charge = charge;
-        this.panel = panel;
         this.g2 = (Graphics2D)panel.getGraphics();
 
         rect = new Rectangle();
@@ -48,10 +46,12 @@ public class Charge{
     }
 
     public void setx(double x){
+        rect.x = (int)x-15;
         this.x = x;
     }
 
     public void sety(double y){
+        rect.y = (int)y-15;
         this.y = y;
     }
 
