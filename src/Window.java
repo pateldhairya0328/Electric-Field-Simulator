@@ -28,7 +28,7 @@ public class Window extends JPanel{
     static int frameHeight = 1;
     
     //offset of screen in pixels
-    static double xOffset = 100;
+    static double xOffset = 0;
     static double yOffset = 0;
 
     //variables for representing units
@@ -45,9 +45,11 @@ public class Window extends JPanel{
     static int mouseX = 0;
     static int mouseY = 0;
     static ArrayList<Charge> charges = new ArrayList<Charge>(0);
-
-    static Graphics2D g2;
+    static double maxCharge = 0;
+    static boolean showGrid = true;
+    static Graphics2D g2;   
     static Window window;
+
     /**
      * Set look and feel of the Window to match platform
      */
@@ -121,104 +123,106 @@ public class Window extends JPanel{
             }
         }
 
-        g2.setColor(Color.LIGHT_GRAY);
-        double k = 0;
-        if (0.5*frameHeight + yOffset < 0.02*frameHeight){
-            for (i = frameWidth/2+(int)xOffset; i < frameWidth; i += intervalX){
-                g2.drawLine((int)i, 0, (int)i, frameHeight);
-                g2.drawString(df.format(k*VAL[curunit]), (int)i, (int)(0.02*frameHeight));
-                k += xStep;
+        if (showGrid){
+            g2.setColor(Color.LIGHT_GRAY);
+            double k = 0;
+            if (0.5*frameHeight + yOffset < 0.02*frameHeight){
+                for (i = frameWidth/2+(int)xOffset; i < frameWidth; i += intervalX){
+                    g2.drawLine((int)i, 0, (int)i, frameHeight);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)i, (int)(0.02*frameHeight));
+                    k += xStep;
+                }
+                k = 0;
+                for (i = frameWidth/2+(int)xOffset; i > 0; i -= intervalX){
+                    g2.drawLine((int)i, 0, (int)i, frameHeight);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)i, (int)(0.02*frameHeight));
+                    k -= xStep;
+                }
+                g2.setColor(Color.BLACK);
+                g2.drawString(UNIT[curunit], (int)(0.98*frameWidth), (int)(0.02*frameHeight));
             }
-            k = 0;
-            for (i = frameWidth/2+(int)xOffset; i > 0; i -= intervalX){
-                g2.drawLine((int)i, 0, (int)i, frameHeight);
-                g2.drawString(df.format(k*VAL[curunit]), (int)i, (int)(0.02*frameHeight));
-                k -= xStep;
+            else if (0.5*frameHeight + yOffset > 0.99*frameHeight){
+                for (i = frameWidth/2+(int)xOffset; i < frameWidth; i += intervalX){
+                    g2.drawLine((int)i, 0, (int)i, frameHeight);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)i, (int)(0.99*frameHeight));
+                    k += xStep;
+                }
+                k = 0;
+                for (i = frameWidth/2+(int)xOffset; i > 0; i -= intervalX){
+                    g2.drawLine((int)i, 0, (int)i, frameHeight);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)i, (int)(0.99*frameHeight));
+                    k -= xStep;
+                }
+                g2.setColor(Color.BLACK);
+                g2.drawString(UNIT[curunit], (int)(0.98*frameWidth), (int)(0.99*frameHeight));
             }
-            g2.setColor(Color.BLACK);
-            g2.drawString(UNIT[curunit], (int)(0.98*frameWidth), (int)(0.02*frameHeight));
-        }
-        else if (0.5*frameHeight + yOffset > 0.99*frameHeight){
-            for (i = frameWidth/2+(int)xOffset; i < frameWidth; i += intervalX){
-                g2.drawLine((int)i, 0, (int)i, frameHeight);
-                g2.drawString(df.format(k*VAL[curunit]), (int)i, (int)(0.99*frameHeight));
-                k += xStep;
+            else{
+                for (i = frameWidth/2+(int)xOffset; i < frameWidth; i += intervalX){
+                    g2.drawLine((int)i, 0, (int)i, frameHeight);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)i, frameHeight/2+(int)yOffset);
+                    k += xStep;
+                }
+                k = 0;
+                for (i = frameWidth/2+(int)xOffset; i > 0; i -= intervalX){
+                    g2.drawLine((int)i, 0, (int)i, frameHeight);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)i, frameHeight/2+(int)yOffset);
+                    k -= xStep;
+                }
+                g2.setColor(Color.BLACK);
+                g2.drawString(UNIT[curunit], (int)(0.98*frameWidth), frameHeight/2+(int)yOffset);
             }
-            k = 0;
-            for (i = frameWidth/2+(int)xOffset; i > 0; i -= intervalX){
-                g2.drawLine((int)i, 0, (int)i, frameHeight);
-                g2.drawString(df.format(k*VAL[curunit]), (int)i, (int)(0.99*frameHeight));
-                k -= xStep;
-            }
-            g2.setColor(Color.BLACK);
-            g2.drawString(UNIT[curunit], (int)(0.98*frameWidth), (int)(0.99*frameHeight));
-        }
-        else{
-            for (i = frameWidth/2+(int)xOffset; i < frameWidth; i += intervalX){
-                g2.drawLine((int)i, 0, (int)i, frameHeight);
-                g2.drawString(df.format(k*VAL[curunit]), (int)i, frameHeight/2+(int)yOffset);
-                k += xStep;
-            }
-            k = 0;
-            for (i = frameWidth/2+(int)xOffset; i > 0; i -= intervalX){
-                g2.drawLine((int)i, 0, (int)i, frameHeight);
-                g2.drawString(df.format(k*VAL[curunit]), (int)i, frameHeight/2+(int)yOffset);
-                k -= xStep;
-            }
-            g2.setColor(Color.BLACK);
-            g2.drawString(UNIT[curunit], (int)(0.98*frameWidth), frameHeight/2+(int)yOffset);
-        }
 
-        g2.setColor(Color.LIGHT_GRAY);
-        k = 0;
-        if (0.5*frameWidth + xOffset < 0.01*frameWidth){
-            for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
-                g2.drawLine(0, (int)i, frameWidth, (int)i);
-                g2.drawString(df.format(k*VAL[curunit]), (int)(0.01*frameWidth), (int)i);
-                k -= yStep;
-            }
+            g2.setColor(Color.LIGHT_GRAY);
             k = 0;
-            for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
-                g2.drawLine(0, (int)i, frameWidth, (int)i);
-                g2.drawString(df.format(k*VAL[curunit]), (int)(0.01*frameWidth), (int)i);
-                k += yStep;
+            if (0.5*frameWidth + xOffset < 0.01*frameWidth){
+                for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
+                    g2.drawLine(0, (int)i, frameWidth, (int)i);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)(0.01*frameWidth), (int)i);
+                    k -= yStep;
+                }
+                k = 0;
+                for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
+                    g2.drawLine(0, (int)i, frameWidth, (int)i);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)(0.01*frameWidth), (int)i);
+                    k += yStep;
+                }
+                g2.setColor(Color.BLACK);
+                g2.drawString(UNIT[curunit], (int)(0.01*frameWidth), (int)(0.02*frameHeight));
             }
-            g2.setColor(Color.BLACK);
-            g2.drawString(UNIT[curunit], (int)(0.01*frameWidth), (int)(0.02*frameHeight));
+            else if (0.5*frameWidth + xOffset > 0.99*frameWidth){
+                for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
+                    g2.drawLine(0, (int)i, frameWidth, (int)i);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)(0.99*frameWidth), (int)i);
+                    k -= yStep;
+                }
+                k = 0;
+                for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
+                    g2.drawLine(0, (int)i, frameWidth, (int)i);
+                    g2.drawString(df.format(k*VAL[curunit]), (int)(0.99*frameWidth), (int)i);
+                    k += yStep;
+                }
+                g2.setColor(Color.BLACK);
+                g2.drawString(UNIT[curunit], (int)(0.99*frameWidth), (int)(0.02*frameHeight));
+            }
+            else{
+                for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
+                    g2.drawLine(0, (int)i, frameWidth, (int)i);
+                    g2.drawString(df.format(k*VAL[curunit]), frameWidth/2+(int)xOffset, (int)i);
+                    k -= yStep;
+                }
+                k = 0;
+                for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
+                    g2.drawLine(0, (int)i, frameWidth, (int)i);
+                    g2.drawString(df.format(k*VAL[curunit]), frameWidth/2+(int)xOffset, (int)i);
+                    k += yStep;
+                }
+                g2.setColor(Color.BLACK);
+                g2.drawString(UNIT[curunit], frameWidth/2 + (int)xOffset, (int)(0.02*frameHeight));
+            }
+            
+            g2.drawLine(0, frameHeight/2+(int)yOffset, frameWidth, frameHeight/2+(int)yOffset);
+            g2.drawLine(frameWidth/2+(int)xOffset, 0, frameWidth/2+(int)xOffset, frameHeight);
         }
-        else if (0.5*frameWidth + xOffset > 0.99*frameWidth){
-            for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
-                g2.drawLine(0, (int)i, frameWidth, (int)i);
-                g2.drawString(df.format(k*VAL[curunit]), (int)(0.99*frameWidth), (int)i);
-                k -= yStep;
-            }
-            k = 0;
-            for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
-                g2.drawLine(0, (int)i, frameWidth, (int)i);
-                g2.drawString(df.format(k*VAL[curunit]), (int)(0.99*frameWidth), (int)i);
-                k += yStep;
-            }
-            g2.setColor(Color.BLACK);
-            g2.drawString(UNIT[curunit], (int)(0.99*frameWidth), (int)(0.02*frameHeight));
-        }
-        else{
-            for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
-                g2.drawLine(0, (int)i, frameWidth, (int)i);
-                g2.drawString(df.format(k*VAL[curunit]), frameWidth/2+(int)xOffset, (int)i);
-                k -= yStep;
-            }
-            k = 0;
-            for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
-                g2.drawLine(0, (int)i, frameWidth, (int)i);
-                g2.drawString(df.format(k*VAL[curunit]), frameWidth/2+(int)xOffset, (int)i);
-                k += yStep;
-            }
-            g2.setColor(Color.BLACK);
-            g2.drawString(UNIT[curunit], frameWidth/2 + (int)xOffset, (int)(0.02*frameHeight));
-        }
-        
-        g2.drawLine(0, frameHeight/2+(int)yOffset, frameWidth, frameHeight/2+(int)yOffset);
-        g2.drawLine(frameWidth/2+(int)xOffset, 0, frameWidth/2+(int)xOffset, frameHeight);
     }
 
     /**
@@ -277,6 +281,14 @@ public class Window extends JPanel{
                 ++i;
             }
             return i;
+        }
+    }
+
+    static void findMax(){
+        for (Charge c: charges){
+            if (Math.abs(c.getChargeNum())>maxCharge){
+                maxCharge = Math.abs(c.getChargeNum());
+            }
         }
     }
 }
