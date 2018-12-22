@@ -10,6 +10,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import java.lang.Math;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class Window extends JPanel{
     static final long serialVersionUID = 1L;
@@ -40,6 +41,9 @@ public class Window extends JPanel{
     static int curunit = BASE;
 
     static int cursor = Cursor.DEFAULT_CURSOR;
+    static int mouseX = 0;
+    static int mouseY = 0;
+    static ArrayList<Charge> charges = new ArrayList<Charge>(0);
 
     /**
      * Set look and feel of the Window to match platform
@@ -66,8 +70,6 @@ public class Window extends JPanel{
         frameWidth = getWidth();
         frameHeight = getHeight();
         drawGrid(g2);
-
-        repaint();
     }
 
     /**
@@ -181,13 +183,13 @@ public class Window extends JPanel{
             for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
                 g2.drawLine(0, (int)i, frameWidth, (int)i);
                 g2.drawString(df.format(k*VAL[curunit]), (int)(0.99*frameWidth), (int)i);
-                k += yStep;
+                k -= yStep;
             }
             k = 0;
             for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
                 g2.drawLine(0, (int)i, frameWidth, (int)i);
                 g2.drawString(df.format(k*VAL[curunit]), (int)(0.99*frameWidth), (int)i);
-                k -= yStep;
+                k += yStep;
             }
             g2.setColor(Color.BLACK);
             g2.drawString(UNIT[curunit], (int)(0.99*frameWidth), (int)(0.02*frameHeight));
@@ -196,13 +198,13 @@ public class Window extends JPanel{
             for (i = frameHeight/2+(int)yOffset; i < frameHeight; i += intervalY){
                 g2.drawLine(0, (int)i, frameWidth, (int)i);
                 g2.drawString(df.format(k*VAL[curunit]), frameWidth/2+(int)xOffset, (int)i);
-                k += yStep;
+                k -= yStep;
             }
             k = 0;
             for (i = frameHeight/2+(int)yOffset; i > 0; i -= intervalY){
                 g2.drawLine(0, (int)i, frameWidth, (int)i);
                 g2.drawString(df.format(k*VAL[curunit]), frameWidth/2+(int)xOffset, (int)i);
-                k -= yStep;
+                k += yStep;
             }
             g2.setColor(Color.BLACK);
             g2.drawString(UNIT[curunit], frameWidth/2 + (int)xOffset, (int)(0.02*frameHeight));

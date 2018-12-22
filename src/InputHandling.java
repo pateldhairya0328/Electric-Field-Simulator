@@ -6,22 +6,62 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import javax.swing.SwingUtilities;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.ImageIcon;
+
 public class InputHandling{
     int mouseX = 0;
     int mouseY = 0;
+    JPopupMenu defaultMenu;
+    
     public InputHandling(){
+        defaultMenu = new JPopupMenu();
+        JMenuItem item;
+        item = new JMenuItem("New Charge");
+        item.setIcon(new ImageIcon("Assets\\Add_Charge.png"));
+        defaultMenu.add(item);
+        item = new JMenuItem("Reset Charges");
+        item.setIcon(new ImageIcon("Assets\\Reset_Charges.png"));
+        defaultMenu.add(item);
+        item = new JMenuItem("Get Electric Field Strength");
+        item.setIcon(new ImageIcon("Assets\\Get_Electric_Field_Strength.png"));
+        defaultMenu.add(item);
         
+        defaultMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
+        
+        item = new JMenuItem("Zoom In");
+        item.setIcon(new ImageIcon("Assets\\Zoom_In.png"));
+        defaultMenu.add(item);
+        item = new JMenuItem("Zoom Out");
+        item.setIcon(new ImageIcon("Assets\\Zoom_Out.png"));
+        defaultMenu.add(item);
+        item = new JMenuItem("Set Bounds");
+        item.setIcon(new ImageIcon("Assets\\Set_Bounds.png"));
+        defaultMenu.add(item);
+
+        defaultMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
+        
+        item = new JMenuItem("Help");
+        item.setIcon(new ImageIcon("Assets\\Help.png"));
+        defaultMenu.add(item);
     }
 
     public class MouseInputHandler implements MouseListener{
         @Override
         public void mouseClicked(MouseEvent e){
-            
+            if (SwingUtilities.isRightMouseButton(e)){
+                defaultMenu.show(e.getComponent(), mouseX, mouseY);
+            }
         }
 
         @Override
         public void mouseReleased(MouseEvent e){
             Window.cursor = Cursor.DEFAULT_CURSOR;
+            e.getComponent().repaint();
         }
 
         @Override
@@ -31,7 +71,7 @@ public class InputHandling{
 
         @Override
         public void mousePressed(MouseEvent e){
-            
+
         }
 
         @Override
@@ -74,6 +114,8 @@ public class InputHandling{
             fin = Window.yStep*(-0.1*amount*(Window.frameHeight-e.getY())-Window.yOffset+Window.frameHeight/2)/Window.intervalY;
             Window.yOffset = (ini*Window.frameHeight)/(ini-fin)-Window.frameHeight/2;
             Window.gridHeight = fin-ini;
+
+            e.getComponent().repaint();
         }
     }
 
@@ -85,12 +127,16 @@ public class InputHandling{
             mouseX = e.getX();
             mouseY = e.getY();
             Window.cursor = Cursor.MOVE_CURSOR;
+            
+            e.getComponent().repaint();
         }
 
         @Override
         public void mouseMoved(MouseEvent e){
             mouseX = e.getX();
             mouseY = e.getY();
+            Window.mouseX = mouseX;
+            Window.mouseY = mouseY;
         }
     }
 }
