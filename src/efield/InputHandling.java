@@ -2,6 +2,8 @@ package efield;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -12,19 +14,26 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
+import java.io.IOException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import javax.swing.SwingUtilities;
+import java.util.Scanner;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class InputHandling{
     int mouseX = 0;
@@ -75,14 +84,13 @@ public class InputHandling{
             item = new JMenuItem("Set Bounds");
             item.setIcon(new ImageIcon("Assets\\Set_Bounds.png"));
             item.addActionListener(mList.new Set_Bounds());
-            defaultMenu.add(item);
-
-            defaultMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
-            
+            defaultMenu.add(item);            
             item = new JMenuItem("Hide Grid");
             item.setIcon(new ImageIcon("Assets\\Hide_Grid.png"));
             item.addActionListener(mList.new Change_Grid());
             defaultMenu.add(item);
+            
+            defaultMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
 
             item = new JMenuItem("Set Precision");
             item.setIcon(new ImageIcon("Assets\\Set_Precision.png"));
@@ -93,7 +101,13 @@ public class InputHandling{
 
             item = new JMenuItem("Help");
             item.setIcon(new ImageIcon("Assets\\Help.png"));
+            item.addActionListener(mList.new Help());
             defaultMenu.add(item);
+
+            JButton b = new JButton("Help");
+            b.addActionListener(mList.new Help());
+            Window.window.setLayout(new FlowLayout(FlowLayout.RIGHT));
+            Window.window.add(b);
         }
 
         //Make Message to display for Adding Charge
@@ -131,6 +145,7 @@ public class InputHandling{
             addChargeMessage[4] = "Charge and select unit";
             addChargeMessage[5] = message;
         }
+
     }
 
     /**
@@ -276,7 +291,6 @@ public class InputHandling{
 
     /**
      * Action listeners for each option in the menu
-     * TODO: Add help listener
      */
     public class MenuItemListener{
         public MenuItemListener(){
@@ -483,20 +497,20 @@ public class InputHandling{
         public class Change_Grid implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e){
-                defaultMenu.remove(8);
+                defaultMenu.remove(7);
                 if (Window.showGrid){
                     Window.showGrid = false;
                     JMenuItem item = new JMenuItem("Show Grid");
                     item.setIcon(new ImageIcon("Assets\\Show_Grid.png"));
                     item.addActionListener(new Change_Grid());
-                    defaultMenu.add(item, 8);
+                    defaultMenu.add(item, 7);
                 }
                 else{
                     Window.showGrid = true;
                     JMenuItem item = new JMenuItem("Hide Grid");
                     item.setIcon(new ImageIcon("Assets\\Hide_Grid.png"));
                     item.addActionListener(new Change_Grid());
-                    defaultMenu.add(item, 8);
+                    defaultMenu.add(item, 7);
                 }
                 Window.window.repaint();
             }
@@ -529,6 +543,30 @@ public class InputHandling{
                 if (precision > 0){
                     Window.df2.setMaximumFractionDigits(0);
                 }
+            }
+        }
+
+        public class Help implements ActionListener{
+            @Override
+            public void actionPerformed(ActionEvent e){                
+                JEditorPane ep = new JEditorPane();
+                String helpText = "";
+                try{
+                    Scanner scn = new Scanner(new File("Assets\\helpText.txt"));
+                    helpText = scn.useDelimiter("\\Z").next();
+                    scn.close();
+                }catch(IOException ex){
+                    System.out.println(ex.getMessage());
+                }
+                ep.setContentType("text/html");
+                ep.setText(helpText);
+                ep.setBackground(null);
+                ep.setEditable(false);
+                ep.setCaretPosition(0);
+                JScrollPane sp = new JScrollPane(ep);
+                sp.setPreferredSize(new Dimension(500, 500));
+                sp.setBorder(null);
+                JOptionPane.showMessageDialog(null, sp);
             }
         }
     }

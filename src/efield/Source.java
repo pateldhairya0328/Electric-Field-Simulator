@@ -40,6 +40,7 @@ public class Source{
                 frame.setVisible(true);
                 frame.setExtendedState (JFrame.MAXIMIZED_BOTH);
                 frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+                frame.setResizable(false);
                 frame.setIconImage(new ImageIcon("Assets\\eFieldSimIcon.png").getImage());
             }
         });        

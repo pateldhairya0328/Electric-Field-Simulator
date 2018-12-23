@@ -107,6 +107,17 @@ public class Window extends JPanel{
             g2.setColor(Color.BLACK);
             g2.drawString(display, 20, 20);
         }
+        
+        int [] xs = {(int)(0.95*frameWidth), (int)(0.9525*frameWidth), (int)(0.9475*frameWidth)};
+        int [] ys = {(int)(0.15*frameHeight-0.0375*frameWidth), (int)(0.15*frameHeight - 0.0325*frameWidth), (int)(0.15*frameHeight - 0.0325*frameWidth)};
+        g2.fillPolygon(xs, ys, 3);
+        int []xss = {(int)(0.9875*frameWidth), (int)(0.9825*frameWidth), (int)(0.9825*frameWidth)};
+        int []yss = {(int)(0.15*frameHeight), (int)(0.15*frameHeight - 0.0025*frameWidth), (int)(0.15*frameHeight + 0.0025*frameWidth)};
+        g2.fillPolygon(xss, yss, 3);
+        g2.drawLine((int)(0.95*frameWidth), (int)(0.15*frameHeight), (int)(0.9875*frameWidth), (int)(0.15*frameHeight));
+        g2.drawLine((int)(0.95*frameWidth), (int)(0.15*frameHeight), (int)(0.95*frameWidth), (int)(0.15*frameHeight-0.0375*frameWidth));
+        g2.drawString("N", (int)(0.95*frameWidth)-7, (int)(0.15*frameHeight-0.0375*frameWidth));
+        g2.drawString("E", (int)(0.9875*frameWidth), (int)(0.15*frameHeight)+7);
     }
 
     /**
