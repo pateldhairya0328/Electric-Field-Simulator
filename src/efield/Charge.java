@@ -15,6 +15,7 @@ public class Charge{
     private Graphics2D g2;
 
     /**
+     * Constructor for the Charge class
      * 
      * @param x x-position of charge
      * @param y y-position of charge
@@ -33,6 +34,11 @@ public class Charge{
         rect.setSize(rectSize, rectSize);
     }
 
+    /**
+     * Gets the x coordiante as a String
+     * 
+     * @return String Value of x coordinate with appropriate unit
+     */
     public String getx(){
         if (this.x >= 0.5){
             return this.x*Window.VAL[Window.BASE]+" "+Window.UNIT[Window.BASE];
@@ -48,10 +54,20 @@ public class Charge{
         }
     }
 
+    /**
+     * Gets the x coordinate as a number
+     * 
+     * @return double x coordinate
+     */
     public double getXNum(){
         return x;
     }
 
+    /**
+     * Gets the y coordiante as a String
+     * 
+     * @return String Value of y coordinate with appropriate unit
+     */
     public String gety(){
         if (this.y >= 0.5){
             return this.y*Window.VAL[Window.BASE]+" "+Window.UNIT[Window.BASE];
@@ -67,10 +83,20 @@ public class Charge{
         }
     }
 
+    /**
+     * Gets the y coordinate as a number
+     * 
+     * @return double y coordinate
+     */
     public double getYNum(){
         return y;
     }
 
+    /**
+     * Gets the charge as a String
+     * 
+     * @return String Value of the charge with appropriate unit
+     */
     public String getCharge(){
         if (Math.abs(this.charge) >= 0.5){
             return this.charge*Window.VAL[Window.BASE]+" "+Window.CUNIT[Window.BASE];
@@ -86,30 +112,60 @@ public class Charge{
         }
     }
 
+    /**
+     * Gets the charge as a number
+     * 
+     * @return double value of charge
+     */
     public double getChargeNum(){
         return charge;
     }
 
+    /**
+     * Gets the rectangle which represents the charge on the screen
+     * 
+     * @return Rectangle rectangle that represents the charge
+     */
     public Rectangle getRect(){
         rect.x = (int)(x*Window.intervalX/Window.xStep+Window.xOffset+Window.frameWidth/2)-rectSize/2;
         rect.y = (int)(-y*Window.intervalY/Window.yStep+Window.yOffset+Window.frameHeight/2)-rectSize/2;
         return rect;
     }
 
+    /**
+     * Sets x coordinate
+     * @param x new x coordinate
+     */
     public void setx(double x){
         rect.x = (int)(x*Window.intervalX/Window.xStep+Window.xOffset+Window.frameWidth/2)-rectSize/2;
         this.x = x;
     }
 
+    /**
+     * Sets y coordinate
+     * @param y new y coordinate
+     */
     public void sety(double y){
         rect.y = (int)(-y*Window.intervalY/Window.yStep+Window.yOffset+Window.frameHeight/2)-rectSize/2;
         this.y = y;
     }
 
+    /**
+     * Sets charge
+     * @param charge new charge value
+     */
     public void setCharge(double charge){
         this.charge = charge;
     }
 
+    /**
+     * Draws the charge onto the screen, with the color of the charge representing its magnitude
+     * in comparison to the highest magnitude charge, and representing the sign of the charge.
+     * Blue charges are negative, red charges are positive, light gray charges are neutral.
+     * Lighter charges have lower magnitudes. The equations to find the colors were found
+     * by fitting polynomials to 3 plots of rgb vs ratio points (one for each color). A gray 
+     * oval border is drawn around the charge, since very low charges blend into the background.
+     */
     public void drawCharge(){
         rect.x = (int)(x*Window.intervalX/Window.xStep+Window.xOffset+Window.frameWidth/2)-rectSize/2;
         rect.y = (int)(-y*Window.intervalY/Window.yStep+Window.yOffset+Window.frameHeight/2)-rectSize/2;

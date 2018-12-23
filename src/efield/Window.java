@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.Cursor;
+import java.awt.Font;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -44,11 +45,16 @@ public class Window extends JPanel{
     static final String[] CUNIT = {"C", "mC", "uC", "nC"};
     static int curunit = BASE;
 
+    //mouse variables
     static int cursor = Cursor.DEFAULT_CURSOR;
     static int mouseX = 0;
     static int mouseY = 0;
+    
+    //charge variables
     static ArrayList<Charge> charges = new ArrayList<Charge>(0);
     static double maxCharge = 0;
+
+    //miscellaneous
     static boolean showGrid = true;
     static Graphics2D g2;   
     static Window window;
@@ -73,17 +79,33 @@ public class Window extends JPanel{
     protected void paintComponent(Graphics g){   
         super.paintComponent(g);
         g2 = (Graphics2D)g;
+        g2.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 
+        //changes cursor if needed
         this.setCursor(new Cursor(cursor));
         
+        //gets dimensions of frame (for use in other places)
         frameWidth = getWidth();
         frameHeight = getHeight();
+        
+        //draws the grid and electric field
         drawGrid();
         drawField();
-        g2.setColor(Color.BLACK);
-        g2.drawString(display, 10, 10);
+        
+        //draws the charges
         for (Charge c: charges){
             c.drawCharge();
+        }
+        
+        //draws the value of the electric field at a point
+        //the user clicked at
+        if (!display.equals("")){
+            g2.setColor(new Color(240, 240, 240));
+            g2.fillRect(15, 0, 10 + g2.getFontMetrics().stringWidth(display), 30);
+            g2.setColor(Color.LIGHT_GRAY);
+            g2.drawRect(15, 0, 10 + g2.getFontMetrics().stringWidth(display), 30);
+            g2.setColor(Color.BLACK);
+            g2.drawString(display, 20, 20);
         }
     }
 
@@ -101,12 +123,15 @@ public class Window extends JPanel{
         double [][] ang = new double[1+(int)(2*gridWidth/xStep)][1+(int)(2*gridHeight/xStep)];
         double max = 0;
 
+        //finds and stores electric field values (and angle) for every point to draw at
+        //also finds the maximum charge
         for (double i = 0; i < gridWidth/xStep; i += 0.5){
             x = i*xStep-xDiff;
             for (double j = 0; j < gridHeight/xStep; j += 0.5){
                 y = -j*yStep+yDiff;
                 eFieldY = 0;
                 eFieldX = 0;
+                //calculate x and y components of efield first, then the overall efield strength and angle
                 for (Charge c: charges){
                     r = Math.sqrt((x-c.getXNum())*(x-c.getXNum())+(y-c.getYNum())*(y-c.getYNum()));
                     theta = Math.atan2(y-c.getYNum(), x-c.getXNum());
@@ -123,6 +148,8 @@ public class Window extends JPanel{
             }
         }
 
+        //draws the electric field values found before as arrows, with their darkness 
+        //representing their magnitude.
         for (int i = 0; i < 2*gridWidth/xStep; i++){
             arrowMidX = 0.5*i*intervalX;
             for (int j = 0; j < 2*gridHeight/xStep; j++){
@@ -133,7 +160,8 @@ public class Window extends JPanel{
                     sizeY = 0.15*intervalY;
                     arrowX = sizeX*Math.cos(theta);
                     arrowY = sizeY*Math.sin(theta);
-    
+                    
+                    //arrow head calculations
                     xm = (int)(.75*sizeX*Math.cos(Math.PI+theta+delta)+arrowMidX+arrowX);
                     xn = (int)(.75*sizeX*Math.cos(Math.PI+theta-delta)+arrowMidX+arrowX);
                     ym = (int)(-.75*sizeY*Math.sin(Math.PI+theta+delta)+arrowMidY-arrowY);
@@ -141,6 +169,7 @@ public class Window extends JPanel{
                     int[] xs = {xm, xn, (int)(arrowMidX+arrowX)};
                     int[] ys = {ym, yn, (int)(arrowMidY-arrowY)};
 
+                    //makes color of charges a gradient overall based on electric field strength at that point
                     int color = (int)(200*Math.pow(100, -100*vals[i][j]/max));
                     g2.setColor(new Color(color, color, color));
                     g2.drawLine((int)(arrowMidX+arrowX), (int)(arrowMidY-arrowY), (int)(arrowMidX-arrowX), (int)(arrowMidY+arrowY));
@@ -150,7 +179,20 @@ public class Window extends JPanel{
         }
     }
 
-    String getEFieldValue(double x, double y, boolean changeDisplay){
+    //gets the electric field strength at one point
+    //also changes the display string representing the efield strength at a point
+    //if the user clicked there
+    /**
+     * gets the electric field strength at one point
+     * also changes the display string representing the efield strength at a point
+     * if the user clicked there
+     * 
+     * @param x x coordinate to get efield strength at
+     * @param y y coordinate to get efield strength at
+     * @param changeDisplay check to change the display or not
+     * @return String efield strength and it's angle
+     */
+    public String getEFieldValue(double x, double y, boolean changeDisplay){
         double eFieldY, eFieldX, eField, r, theta;
         eFieldY = 0;
         eFieldX = 0;
@@ -206,6 +248,9 @@ public class Window extends JPanel{
         double i;
 
         //Find Step size and Unit
+        //This is done even if the user has selected to hide the grid
+        //because the values calculated here are needed in other 
+        //places
         {
             xStep = findStep(gridWidth/20);
             intervalX = frameWidth/(gridWidth/xStep);
@@ -239,6 +284,7 @@ public class Window extends JPanel{
             }
         }
 
+        //draws the grid if user hasn't selected to hide the grid
         if (showGrid){
             g2.setColor(Color.LIGHT_GRAY);
             double k = 0;
@@ -343,7 +389,7 @@ public class Window extends JPanel{
 
     /**
      * Finds an step value that starts with either 1, 2 or 5 and is one 
-     * significant only. This makes the step sizes on the grid simpler to
+     * significant figure only. This makes the step sizes on the grid simpler to
      * follow.
      * 
      * @param val Value to round
@@ -400,6 +446,9 @@ public class Window extends JPanel{
         }
     }
 
+    /**
+     * Finds the maximum magnitude charge
+     */
     static void findMax(){
         for (Charge c: charges){
             if (Math.abs(c.getChargeNum())>maxCharge){

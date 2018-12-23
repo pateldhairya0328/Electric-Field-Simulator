@@ -1,6 +1,6 @@
 /**
  * @author Dhairya Patel
- * Simulates Electric Fields
+ * Program to simulate electric fields
  */
 
 package efield;
@@ -13,6 +13,11 @@ import javax.swing.JFrame;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+/**
+ * Start of the program.
+ * Makes the JFrame for the entire program and adds the program window
+ * to it (the JPanel).
+ */
 public class Source{
     public static void main(String []args){
         SwingUtilities.invokeLater(new Runnable() {

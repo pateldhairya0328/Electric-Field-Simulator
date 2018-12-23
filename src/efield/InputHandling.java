@@ -1,6 +1,8 @@
 package efield;
 
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,6 +35,14 @@ public class InputHandling{
     JComboBox<String> cbx, cby, cbc;
     int chargeToChange;
 
+    /**
+     * Makes the Popup Menu and Message for adding charge
+     * Done here because it would be slower for the program to 
+     * Create the menu every time the user right clicked. Instead,
+     * the menu is only made visible or not for speed (but also
+     * uses more RAM consitently). Same reason for why adding charge
+     * message is also made here.
+     */
     public InputHandling(){
         //Make Default Charge Popup Menu
         {
@@ -123,6 +133,9 @@ public class InputHandling{
         }
     }
 
+    /**
+     * Listener for the mouse buttons
+     */
     public class MouseInputHandler implements MouseListener{
         @Override
         public void mouseClicked(MouseEvent e){
@@ -177,8 +190,14 @@ public class InputHandling{
             for (Charge c: Window.charges){
                 if (c.getRect().contains(mouseX, mouseY)){
                     Graphics2D g2 = (Graphics2D)Window.window.getGraphics();
-                    g2.drawString("Charge: "+c.getCharge(), mouseX+10, mouseY);
-                    g2.drawString("(x, y) = ("+c.getx()+", "+c.gety()+")", mouseX+10, mouseY+10);
+                    g2.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+                    g2.setColor(new Color(240, 240, 240));
+                    g2.fillRect(mouseX+15, mouseY - 20, 10 + g2.getFontMetrics().stringWidth("(x, y) = ("+c.getx()+", "+c.gety()+")"), 50);
+                    g2.setColor(Color.LIGHT_GRAY);
+                    g2.drawRect(mouseX+15, mouseY - 20, 10 + g2.getFontMetrics().stringWidth("(x, y) = ("+c.getx()+", "+c.gety()+")"), 50);
+                    g2.setColor(Color.BLACK);
+                    g2.drawString("Charge: "+c.getCharge(), mouseX + 20, mouseY);
+                    g2.drawString("(x, y) = ("+c.getx()+", "+c.gety()+")", mouseX + 20, mouseY + 20);
                     break;
                 }
             }
@@ -189,6 +208,9 @@ public class InputHandling{
         }
     }
 
+    /**
+     * Listener for when the mouse wheel is moved (scrolling)
+     */
     public class MouseWheelHandler implements MouseWheelListener{
         @Override
         public void mouseWheelMoved(MouseWheelEvent e){
@@ -228,6 +250,9 @@ public class InputHandling{
         }
     }
 
+    /**
+     * Listener for when the mouse is moved
+     */
     public class MouseMoveHandler implements MouseMotionListener{
         @Override
         public void mouseDragged(MouseEvent e){
@@ -249,6 +274,10 @@ public class InputHandling{
         }
     }
 
+    /**
+     * Action listeners for each option in the menu
+     * TODO: Add help listener
+     */
     public class MenuItemListener{
         public MenuItemListener(){
         }
