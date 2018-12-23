@@ -71,6 +71,11 @@ public class InputHandling{
             item.setIcon(new ImageIcon("Assets\\Hide_Grid.png"));
             item.addActionListener(mList.new Change_Grid());
             defaultMenu.add(item);
+
+            item = new JMenuItem("Set Precision");
+            item.setIcon(new ImageIcon("Assets\\Set_Precision.png"));
+            item.addActionListener(mList.new Set_Precision());
+            defaultMenu.add(item);
             
             defaultMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
 
@@ -150,7 +155,8 @@ public class InputHandling{
             else if (SwingUtilities.isLeftMouseButton(e)){
                 Window.window.getEFieldValue(
                     Window.xStep*(e.getX()-Window.xOffset-Window.frameWidth/2)/Window.intervalX,
-                    Window.yStep*(e.getY()-Window.yOffset-Window.frameHeight/2)/Window.intervalY);
+                    Window.yStep*(-e.getY()+Window.yOffset+Window.frameHeight/2)/Window.intervalY,
+                    true);
             }
         }
 
@@ -468,7 +474,30 @@ public class InputHandling{
         public class Get_Electric_Field_Strength implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e){
-                Window.window.getEFieldValue(1, 0);
+                JTextField xPos = new JTextField();
+                JTextField yPos = new JTextField();
+                Object[] m = {"Enter x position of location", xPos, "Enter y position of location", yPos};
+                Object[] options = {"Yes", "Cancel"};
+                int opt = JOptionPane.showOptionDialog(null, m, "Coordinates for electric field strength", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                if (opt == JOptionPane.YES_OPTION){
+                    try{
+                        String ef = Window.window.getEFieldValue(Double.parseDouble(xPos.getText()), Double.parseDouble(yPos.getText()), false);
+                        JOptionPane.showMessageDialog(null, ef);
+                    }catch (NumberFormatException ex){}
+                }
+            }
+        }
+
+        public class Set_Precision implements ActionListener{
+            @Override
+            public void actionPerformed(ActionEvent e){
+                double precision = 0;
+                try{
+                    precision = Double.parseDouble(JOptionPane.showInputDialog(null, "Enter Number of digits after decimal", "Set Precision", JOptionPane.QUESTION_MESSAGE));
+                }catch(NumberFormatException ex){}
+                if (precision > 0){
+                    Window.df2.setMaximumFractionDigits(0);
+                }
             }
         }
     }

@@ -70,13 +70,13 @@ public class Charge{
     }
 
     public String getCharge(){
-        if (this.charge >= 0.5){
+        if (Math.abs(this.charge) >= 0.5){
             return this.charge*Window.VAL[Window.BASE]+" "+Window.CUNIT[Window.BASE];
         }
-        else if (this.charge >= 0.0005){
+        else if (Math.abs(this.charge) >= 0.0005){
             return this.charge*Window.VAL[Window.MILLI]+" "+Window.CUNIT[Window.MILLI];
         }
-        else if (this.charge >= 0.0000005){
+        else if (Math.abs(this.charge) >= 0.0000005){
             return this.charge*Window.VAL[Window.MICRO]+" "+Window.CUNIT[Window.MICRO];
         }
         else{

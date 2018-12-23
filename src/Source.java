@@ -1,3 +1,8 @@
+/**
+ * @author Dhairya Patel
+ * Simulates Electric Fields
+ */
+
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseMotionListener;

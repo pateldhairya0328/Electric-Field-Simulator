@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Window extends JPanel{
     static final long serialVersionUID = 1L;
     static DecimalFormat df = new DecimalFormat("#.#");
-    static DecimalFormat df2 = new DecimalFormat("#.##");
+    static DecimalFormat df2 = new DecimalFormat("#.###");
 
     //variables for grid size
     static double ratio = Toolkit.getDefaultToolkit().getScreenSize().getWidth()/Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -78,6 +78,7 @@ public class Window extends JPanel{
         frameHeight = getHeight();
         drawGrid();
         drawField();
+        g2.setColor(Color.BLACK);
         g2.drawString(display, 10, 10);
         for (Charge c: charges){
             c.drawCharge();
@@ -147,7 +148,7 @@ public class Window extends JPanel{
         }
     }
 
-    String getEFieldValue(double x, double y){
+    String getEFieldValue(double x, double y, boolean changeDisplay){
         double eFieldY, eFieldX, eField, r, theta;
         eFieldY = 0;
         eFieldX = 0;
@@ -161,34 +162,37 @@ public class Window extends JPanel{
 
         //8987551787.3681764 = Coulomb's constant
         eField = 8987551787.3681764*Math.sqrt(eFieldX*eFieldX+eFieldY*eFieldY);
-        theta = -Math.toDegrees(Math.atan2(eFieldY, eFieldX));
+        theta = Math.toDegrees(Math.atan2(eFieldY, eFieldX));
+        String display1;
 
-        g2.setColor(Color.BLACK);
         if (theta > 0 && theta < 90){
-            display = df2.format(eField)+" N/C [E"+df2.format(theta)+"\u00b0N]";
+            display1 = df2.format(eField)+" N/C [E"+df2.format(theta)+"\u00b0N]";
         }
         else if (theta > 90 && theta < 180){
-            display = df2.format(eField)+" N/C [W"+df2.format(180-theta)+"\u00b0N]";
+            display1 = df2.format(eField)+" N/C [W"+df2.format(180-theta)+"\u00b0N]";
         }
         else if (theta < 0 && theta > -90){
-            display = df2.format(eField)+" N/C [E"+df2.format(-theta)+"\u00b0S]";
+            display1 = df2.format(eField)+" N/C [E"+df2.format(-theta)+"\u00b0S]";
         }
         else if (theta < -90 && theta > -180){
-            display = df2.format(eField)+" N/C [W"+df2.format(180+theta)+"\u00b0S]";
+            display1 = df2.format(eField)+" N/C [W"+df2.format(180+theta)+"\u00b0S]";
         }
         else if (theta == 0){
-            display = df2.format(eField)+" N/C [E]";
+            display1 = df2.format(eField)+" N/C [E]";
         }
         else if (theta == 90){
-            display = df2.format(eField)+" N/C [N]";
+            display1 = df2.format(eField)+" N/C [N]";
         }
         else if (theta == -90){
-            display = df2.format(eField)+" N/C [S]";
+            display1 = df2.format(eField)+" N/C [S]";
         }
         else{
-            display = df2.format(eField)+" N/C [W]";
+            display1 = df2.format(eField)+" N/C [W]";
         }
-        return display;
+        if (changeDisplay){
+            display = display1;
+        }
+        return display1;
     }
 
     /**
