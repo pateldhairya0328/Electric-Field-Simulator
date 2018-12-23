@@ -46,6 +46,10 @@ public class Charge{
         }
     }
 
+    public double getXNum(){
+        return x;
+    }
+
     public String gety(){
         if (this.y >= 0.5){
             return this.y*Window.VAL[Window.BASE]+" "+Window.UNIT[Window.BASE];
@@ -59,6 +63,10 @@ public class Charge{
         else{
             return this.y*Window.VAL[Window.NANO]+" "+Window.UNIT[Window.NANO];
         }
+    }
+
+    public double getYNum(){
+        return y;
     }
 
     public String getCharge(){

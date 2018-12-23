@@ -75,9 +75,41 @@ public class Window extends JPanel{
         frameWidth = getWidth();
         frameHeight = getHeight();
         drawGrid();
-
+        drawField();
         for (Charge c: charges){
             c.drawCharge();
+        }
+    }
+
+    void drawField(){
+        double x = 0, y = 0, r = 0, theta = 0, eField = 0, eFieldY = 0, eFieldX = 0;
+        double arrowX = 0, arrowY = 0, arrowMidX = 0, arrowMidY = 0;
+        double xDiff = gridWidth+xStep*(xOffset-frameWidth/2)/intervalX;
+        double yDiff = gridHeight+yStep*(yOffset-frameHeight/2)/intervalY;
+
+        for (double i = 0; i < gridWidth/xStep; i += 0.5){
+            x = i*xStep-xDiff;
+            arrowMidX = i*intervalX;
+            for (double j = 0; j < gridHeight/xStep; j += 0.5){
+                y = -j*yStep+yDiff;
+                arrowMidY = j*intervalY;
+
+                eFieldY = 0;
+                eFieldX = 0;
+                for (Charge c: charges){
+                    r = Math.sqrt((x-c.getXNum())*(x-c.getXNum())+(y-c.getYNum())*(y-c.getYNum()));
+                    theta = Math.atan2(y-c.getYNum(), x-c.getXNum());
+                    eField = c.getChargeNum()/(r*r);
+                    eFieldX += eField*Math.cos(theta);
+                    eFieldY += eField*Math.sin(theta);
+                }
+
+                theta = Math.atan2(eFieldY, eFieldX);
+                arrowX = 5*Math.cos(theta);
+                arrowY = 5*Math.sin(theta);
+                g2.drawLine((int)(arrowMidX+arrowX), (int)(arrowMidY-arrowY), (int)(arrowMidX-arrowX), (int)(arrowMidY+arrowY));
+                //g2.drawString(df.format(eFieldX)+"; "+df.format(eFieldY), (int)(i*intervalX), (int)(j*intervalY));
+            }
         }
     }
 
