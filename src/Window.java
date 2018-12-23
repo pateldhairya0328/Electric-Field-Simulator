@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class Window extends JPanel{
     static final long serialVersionUID = 1L;
     static DecimalFormat df = new DecimalFormat("#.#");
+    static DecimalFormat df2 = new DecimalFormat("#.##");
 
     //variables for grid size
     static double ratio = Toolkit.getDefaultToolkit().getScreenSize().getWidth()/Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -49,6 +50,7 @@ public class Window extends JPanel{
     static boolean showGrid = true;
     static Graphics2D g2;   
     static Window window;
+    static String display = "";
 
     /**
      * Set look and feel of the Window to match platform
@@ -76,24 +78,30 @@ public class Window extends JPanel{
         frameHeight = getHeight();
         drawGrid();
         drawField();
+        g2.drawString(display, 10, 10);
         for (Charge c: charges){
             c.drawCharge();
         }
     }
 
+    /**
+     * Draws the electric field itself
+     */
     void drawField(){
-        double x = 0, y = 0, r = 0, theta = 0, eField = 0, eFieldY = 0, eFieldX = 0;
-        double arrowX = 0, arrowY = 0, arrowMidX = 0, arrowMidY = 0;
+        double x = 0, y = 0, r = 0, theta = 0, delta = 0.5, eField = 0, eFieldY = 0, eFieldX = 0;
+        double arrowX = 0, arrowY = 0, arrowMidX = 0, arrowMidY = 0, sizeX, sizeY;
         double xDiff = gridWidth+xStep*(xOffset-frameWidth/2)/intervalX;
         double yDiff = gridHeight+yStep*(yOffset-frameHeight/2)/intervalY;
+        int xm, xn, ym, yn;
+
+        double [][] vals = new double[1+(int)(2*gridWidth/xStep)][1+(int)(2*gridHeight/xStep)];
+        double [][] ang = new double[1+(int)(2*gridWidth/xStep)][1+(int)(2*gridHeight/xStep)];
+        double max = 0;
 
         for (double i = 0; i < gridWidth/xStep; i += 0.5){
             x = i*xStep-xDiff;
-            arrowMidX = i*intervalX;
             for (double j = 0; j < gridHeight/xStep; j += 0.5){
                 y = -j*yStep+yDiff;
-                arrowMidY = j*intervalY;
-
                 eFieldY = 0;
                 eFieldX = 0;
                 for (Charge c: charges){
@@ -103,14 +111,84 @@ public class Window extends JPanel{
                     eFieldX += eField*Math.cos(theta);
                     eFieldY += eField*Math.sin(theta);
                 }
-
-                theta = Math.atan2(eFieldY, eFieldX);
-                arrowX = 5*Math.cos(theta);
-                arrowY = 5*Math.sin(theta);
-                g2.drawLine((int)(arrowMidX+arrowX), (int)(arrowMidY-arrowY), (int)(arrowMidX-arrowX), (int)(arrowMidY+arrowY));
-                //g2.drawString(df.format(eFieldX)+"; "+df.format(eFieldY), (int)(i*intervalX), (int)(j*intervalY));
+                eField = Math.sqrt(eFieldX*eFieldX+eFieldY*eFieldY);
+                if (eField > max){
+                    max = eField;
+                }
+                vals[(int)(2*i)][(int)(2*j)] = eField;
+                ang[(int)(2*i)][(int)(2*j)] = Math.atan2(eFieldY, eFieldX);
             }
         }
+
+        for (int i = 0; i < 2*gridWidth/xStep; i++){
+            arrowMidX = 0.5*i*intervalX;
+            for (int j = 0; j < 2*gridHeight/xStep; j++){
+                if (vals[i][j] != 0){
+                    theta = ang[i][j];
+                    arrowMidY = 0.5*j*intervalY;
+                    sizeX = 0.15*intervalX;
+                    sizeY = 0.15*intervalY;
+                    arrowX = sizeX*Math.cos(theta);
+                    arrowY = sizeY*Math.sin(theta);
+    
+                    xm = (int)(.75*sizeX*Math.cos(Math.PI+theta+delta)+arrowMidX+arrowX);
+                    xn = (int)(.75*sizeX*Math.cos(Math.PI+theta-delta)+arrowMidX+arrowX);
+                    ym = (int)(-.75*sizeY*Math.sin(Math.PI+theta+delta)+arrowMidY-arrowY);
+                    yn = (int)(-.75*sizeY*Math.sin(Math.PI+theta-delta)+arrowMidY-arrowY);
+                    int[] xs = {xm, xn, (int)(arrowMidX+arrowX)};
+                    int[] ys = {ym, yn, (int)(arrowMidY-arrowY)};
+
+                    int color = (int)(200*Math.pow(100, -100*vals[i][j]/max));
+                    g2.setColor(new Color(color, color, color));
+                    g2.drawLine((int)(arrowMidX+arrowX), (int)(arrowMidY-arrowY), (int)(arrowMidX-arrowX), (int)(arrowMidY+arrowY));
+                    g2.fillPolygon(xs, ys, 3);
+                }
+            }
+        }
+    }
+
+    String getEFieldValue(double x, double y){
+        double eFieldY, eFieldX, eField, r, theta;
+        eFieldY = 0;
+        eFieldX = 0;
+        for (Charge c: charges){
+            r = Math.sqrt((x-c.getXNum())*(x-c.getXNum())+(y-c.getYNum())*(y-c.getYNum()));
+            theta = Math.atan2(y-c.getYNum(), x-c.getXNum());
+            eField = c.getChargeNum()/(r*r);
+            eFieldX += eField*Math.cos(theta);
+            eFieldY += eField*Math.sin(theta);
+        }
+
+        //8987551787.3681764 = Coulomb's constant
+        eField = 8987551787.3681764*Math.sqrt(eFieldX*eFieldX+eFieldY*eFieldY);
+        theta = -Math.toDegrees(Math.atan2(eFieldY, eFieldX));
+
+        g2.setColor(Color.BLACK);
+        if (theta > 0 && theta < 90){
+            display = df2.format(eField)+" N/C [E"+df2.format(theta)+"\u00b0N]";
+        }
+        else if (theta > 90 && theta < 180){
+            display = df2.format(eField)+" N/C [W"+df2.format(180-theta)+"\u00b0N]";
+        }
+        else if (theta < 0 && theta > -90){
+            display = df2.format(eField)+" N/C [E"+df2.format(-theta)+"\u00b0S]";
+        }
+        else if (theta < -90 && theta > -180){
+            display = df2.format(eField)+" N/C [W"+df2.format(180+theta)+"\u00b0S]";
+        }
+        else if (theta == 0){
+            display = df2.format(eField)+" N/C [E]";
+        }
+        else if (theta == 90){
+            display = df2.format(eField)+" N/C [N]";
+        }
+        else if (theta == -90){
+            display = df2.format(eField)+" N/C [S]";
+        }
+        else{
+            display = df2.format(eField)+" N/C [W]";
+        }
+        return display;
     }
 
     /**

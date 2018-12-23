@@ -47,6 +47,7 @@ public class InputHandling{
             defaultMenu.add(item);
             item = new JMenuItem("Get Electric Field Strength");
             item.setIcon(new ImageIcon("Assets\\Get_Electric_Field_Strength.png"));
+            item.addActionListener(mList.new Get_Electric_Field_Strength());
             defaultMenu.add(item);
             
             defaultMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
@@ -145,6 +146,11 @@ public class InputHandling{
                 if (flag){
                     defaultMenu.show(e.getComponent(), mouseX, mouseY);
                 }
+            }
+            else if (SwingUtilities.isLeftMouseButton(e)){
+                Window.window.getEFieldValue(
+                    Window.xStep*(e.getX()-Window.xOffset-Window.frameWidth/2)/Window.intervalX,
+                    Window.yStep*(e.getY()-Window.yOffset-Window.frameHeight/2)/Window.intervalY);
             }
         }
 
@@ -267,6 +273,7 @@ public class InputHandling{
             @Override
             public void actionPerformed(ActionEvent e){
                 Window.charges.clear();
+                Window.maxCharge = 0;
                 Window.window.repaint();
             }
         }
@@ -275,6 +282,7 @@ public class InputHandling{
             @Override
             public void actionPerformed(ActionEvent e){
                 Window.charges.remove(chargeToChange);
+                Window.findMax();
                 Window.window.repaint();
             }
         }
@@ -430,6 +438,8 @@ public class InputHandling{
                         Window.gridHeight = iniY-finY;
                     }catch(NumberFormatException ex){}
                 }
+
+                Window.window.repaint();
             }
         }
 
@@ -452,6 +462,13 @@ public class InputHandling{
                     defaultMenu.add(item, 8);
                 }
                 Window.window.repaint();
+            }
+        }
+
+        public class Get_Electric_Field_Strength implements ActionListener{
+            @Override
+            public void actionPerformed(ActionEvent e){
+                Window.window.getEFieldValue(1, 0);
             }
         }
     }
