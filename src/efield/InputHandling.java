@@ -315,7 +315,9 @@ public class InputHandling{
                         crg.setText("");
                         Window.charges.add(new Charge(x,y,c,Window.window));
                         Window.window.repaint();
-                    }catch(NumberFormatException ex){};
+                    }catch(NumberFormatException ex){
+                        JOptionPane.showMessageDialog(null, "Error:\n"+ex.getMessage()+"\nTry entering a valid number.");
+                    };
                 }
             }
         }
@@ -358,7 +360,9 @@ public class InputHandling{
                         Window.charges.set(chargeToChange, new Charge(x,y,c,Window.window));
                         Window.findMax();
                         Window.window.repaint();
-                    }catch(NumberFormatException ex){};
+                    }catch(NumberFormatException ex){
+                        JOptionPane.showMessageDialog(null, "Error:\n"+ex.getMessage()+"\nTry entering a valid number.");
+                    };
                 }
             }
         }
@@ -477,9 +481,11 @@ public class InputHandling{
                         double finX = Double.parseDouble(xRight.getText());
                         double finY = Double.parseDouble(yBot.getText());
                         if (finX < iniX){
+                            JOptionPane.showMessageDialog(null, "Error:\nThe right x bound cannot be less than the left x bound.");
                             return;
                         }
-                        if (finY > iniY){
+                        else if (finY > iniY){
+                            JOptionPane.showMessageDialog(null, "Error:\nThe top x bound cannot be less than the botton x bound.");
                             return;
                         }
 
@@ -487,7 +493,9 @@ public class InputHandling{
                         Window.yOffset = (iniY*Window.frameHeight)/(iniY-finY)-Window.frameHeight/2;
                         Window.gridWidth = finX-iniX;
                         Window.gridHeight = iniY-finY;
-                    }catch(NumberFormatException ex){}
+                    }catch(NumberFormatException ex){
+                        JOptionPane.showMessageDialog(null, "Error:\n"+ex.getMessage()+"\nTry entering a valid number.");
+                    }
                 }
 
                 Window.window.repaint();
@@ -528,7 +536,9 @@ public class InputHandling{
                     try{
                         String ef = Window.window.getEFieldValue(Double.parseDouble(xPos.getText()), Double.parseDouble(yPos.getText()), false);
                         JOptionPane.showMessageDialog(null, ef);
-                    }catch (NumberFormatException ex){}
+                    }catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(null, "Error:\n"+ex.getMessage()+"\nTry entering a valid number.");                        
+                    }
                 }
             }
         }
@@ -539,9 +549,14 @@ public class InputHandling{
                 double precision = 0;
                 try{
                     precision = Double.parseDouble(JOptionPane.showInputDialog(null, "Enter Number of digits after decimal", "Set Precision", JOptionPane.QUESTION_MESSAGE));
-                }catch(NumberFormatException ex){}
+                }catch(NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Error:\n"+ex.getMessage()+"\nTry entering a valid number.");
+                }
                 if (precision > 0){
                     Window.df2.setMaximumFractionDigits(0);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Error:\nTry entering a non-negative number.");                    
                 }
             }
         }
@@ -556,7 +571,7 @@ public class InputHandling{
                     helpText = scn.useDelimiter("\\Z").next();
                     scn.close();
                 }catch(IOException ex){
-                    System.out.println(ex.getMessage());
+                    System.err.println(ex.getMessage());
                 }
                 ep.setContentType("text/html");
                 ep.setText(helpText);
